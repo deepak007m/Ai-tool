@@ -313,7 +313,7 @@ export const updateReview = async (req: Request, res: Response) => {
         details: error.errors 
       });
     }
-    if (error.code === 'P2025') {
+    if ((error as any).code === 'P2025') {
       return res.status(404).json({ error: 'Review not found' });
     }
     res.status(500).json({ error: 'Internal server error' });
@@ -373,7 +373,7 @@ export const deleteReview = async (req: Request, res: Response) => {
     res.json({ message: 'Review deleted successfully' });
   } catch (error) {
     console.error('Delete review error:', error);
-    if (error.code === 'P2025') {
+    if ((error as any).code === 'P2025') {
       return res.status(404).json({ error: 'Review not found' });
     }
     res.status(500).json({ error: 'Internal server error' });

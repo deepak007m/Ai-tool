@@ -96,7 +96,7 @@ export const createCategory = async (req: Request, res: Response) => {
     res.status(201).json(category);
   } catch (error) {
     console.error('Create category error:', error);
-    if (error.code === 'P2002') {
+    if ((error as any).code === 'P2002') {
       return res.status(400).json({ error: 'Category name already exists' });
     }
     res.status(500).json({ error: 'Internal server error' });
@@ -141,10 +141,10 @@ export const updateCategory = async (req: Request, res: Response) => {
     res.json(category);
   } catch (error) {
     console.error('Update category error:', error);
-    if (error.code === 'P2025') {
+    if ((error as any).code === 'P2025') {
       return res.status(404).json({ error: 'Category not found' });
     }
-    if (error.code === 'P2002') {
+    if ((error as any).code === 'P2002') {
       return res.status(400).json({ error: 'Category name already exists' });
     }
     res.status(500).json({ error: 'Internal server error' });
@@ -184,7 +184,7 @@ export const deleteCategory = async (req: Request, res: Response) => {
     res.json({ message: 'Category deleted successfully' });
   } catch (error) {
     console.error('Delete category error:', error);
-    if (error.code === 'P2025') {
+    if ((error as any).code === 'P2025') {
       return res.status(404).json({ error: 'Category not found' });
     }
     res.status(500).json({ error: 'Internal server error' });

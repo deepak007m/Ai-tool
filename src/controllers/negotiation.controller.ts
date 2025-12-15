@@ -237,10 +237,10 @@ export const getNegotiationById = async (req: Request, res: Response) => {
     }
 
     // Check access permissions
-    const canAccess = 
+    const canAccess =
       user.role === 'ADMIN' ||
       (user.role === 'CUSTOMER' && negotiation.customerId === user.userId) ||
-      (user.role === 'VENDOR' && negotiation.service.vendorId === user.userId);
+      (user.role === 'VENDOR' && negotiation.service.vendor.id === user.userId);
 
     if (!canAccess) {
       return res.status(403).json({ error: 'Access denied' });
@@ -337,7 +337,7 @@ export const updateNegotiationStatus = async (req: Request, res: Response) => {
         details: error.errors 
       });
     }
-    if (error.code === 'P2025') {
+    if ((error as any).code === 'P2025') {
       return res.status(404).json({ error: 'Negotiation not found' });
     }
     res.status(500).json({ error: 'Internal server error' });
@@ -385,7 +385,7 @@ export const cancelNegotiation = async (req: Request, res: Response) => {
     res.json({ message: 'Negotiation cancelled successfully' });
   } catch (error) {
     console.error('Cancel negotiation error:', error);
-    if (error.code === 'P2025') {
+    if ((error as any).code === 'P2025') {
       return res.status(404).json({ error: 'Negotiation not found' });
     }
     res.status(500).json({ error: 'Internal server error' });

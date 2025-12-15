@@ -87,7 +87,7 @@ export default function BrowsePage() {
     });
   };
 
-  const uniqueCities = [...new Set(services.map(service => service.city))].sort();
+  const uniqueCities = Array.from(new Set(services.map(service => service.city))).sort();
 
   if (error) {
     return (
