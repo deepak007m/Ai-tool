@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  CUSTOMER
+  VENDOR
+  ADMIN
+}
+
+enum NegotiationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+model User {
+  id    Int      @id @default(autoincrement())
+  name  String
+  role  UserRole @default(CUSTOMER)
+  phone String?
+  city  String?
+  photo String?
+
+  services     Service[]     @relation("VendorServices")
+  negotiations Negotiation[] @relation("CustomerNegotiations")
+  reviews      Review[]      @relation("CustomerReviews")
+
+  @@index([city], map: "users_city_idx")
+  @@map("users")
+}
+
+model Category {
+  id   Int    @id @default(autoincrement())
+  name String
+  icon String?
+
+  services Service[]
+
+  @@map("categories")
+}
+
+model Service {
+  id           Int     @id @default(autoincrement())
+  vendorId     Int     @map("vendor_id")
+  serviceTitle String  @map("service_title")
+  description  String
+  price        Decimal @db.Numeric(10, 2)
+  phone        String
+  city         String
+  categoryId   Int     @map("category_id")
+  image        String?
+  avgRating    Decimal @default(0) @db.Numeric(3, 2) @map("avg_rating")
+
+  vendor   User     @relation("VendorServices", fields: [vendorId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  negotiations Negotiation[]
+  reviews      Review[]
+
+  @@index([vendorId], map: "services_vendor_id_idx")
+  @@index([categoryId], map: "services_category_id_idx")
+  @@index([city], map: "services_city_idx")
+  @@map("services")
+}
+
+model Negotiation {
+  id         Int               @id @default(autoincrement())
+  serviceId  Int               @map("service_id")
+  customerId Int               @map("customer_id")
+  offerPrice Decimal           @db.Numeric(10, 2) @map("offer_price")
+  status     NegotiationStatus @default(PENDING)
+
+  service  Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  customer User    @relation("CustomerNegotiations", fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([serviceId], map: "negotiations_service_id_idx")
+  @@index([customerId], map: "negotiations_customer_id_idx")
+  @@map("negotiations")
+}
+
+model Review {
+  id         Int    @id @default(autoincrement())
+  serviceId  Int    @map("service_id")
+  customerId Int    @map("customer_id")
+  rating     Int
+  comment    String?
+
+  service  Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  customer User    @relation("CustomerReviews", fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([serviceId], map: "reviews_service_id_idx")
+  @@index([customerId], map: "reviews_customer_id_idx")
+  @@map("reviews")
+}
