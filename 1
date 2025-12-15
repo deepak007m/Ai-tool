@@ -1,0 +1,82 @@
+[1mdiff --git a/prisma/schema.prisma b/prisma/schema.prisma[m
+[1mindex 5907e5c..4d3eefa 100644[m
+[1m--- a/prisma/schema.prisma[m
+[1m+++ b/prisma/schema.prisma[m
+[36m@@ -20,14 +20,16 @@[m [menum NegotiationStatus {[m
+ }[m
+ [m
+ model User {[m
+[31m-  id       Int      @id @default(autoincrement())[m
+[31m-  email    String   @unique[m
+[31m-  password String[m
+[31m-  name     String[m
+[31m-  role     UserRole @default(CUSTOMER)[m
+[31m-  phone    String?[m
+[31m-  city     String?[m
+[31m-  photo    String?[m
+[32m+[m[32m  id        Int      @id @default(autoincrement())[m
+[32m+[m[32m  email     String   @unique[m
+[32m+[m[32m  password  String[m
+[32m+[m[32m  name      String[m
+[32m+[m[32m  role      UserRole @default(CUSTOMER)[m
+[32m+[m[32m  phone     String?[m
+[32m+[m[32m  city      String?[m
+[32m+[m[32m  photo     String?[m
+[32m+[m[32m  createdAt DateTime @default(now()) @map("created_at")[m
+[32m+[m[32m  updatedAt DateTime @updatedAt @map("updated_at")[m
+ [m
+   services     Service[]     @relation("VendorServices")[m
+   negotiations Negotiation[] @relation("CustomerNegotiations")[m
+[36m@@ -38,9 +40,11 @@[m [mmodel User {[m
+ }[m
+ [m
+ model Category {[m
+[31m-  id   Int    @id @default(autoincrement())[m
+[31m-  name String[m
+[31m-  icon String?[m
+[32m+[m[32m  id        Int    @id @default(autoincrement())[m
+[32m+[m[32m  name      String[m
+[32m+[m[32m  icon      String?[m
+[32m+[m[32m  createdAt DateTime @default(now()) @map("created_at")[m
+[32m+[m[32m  updatedAt DateTime @updatedAt @map("updated_at")[m
+ [m
+   services Service[][m
+ [m
+[36m@@ -48,8 +52,8 @@[m [mmodel Category {[m
+ }[m
+ [m
+ model Service {[m
+[31m-  id           Int     @id @default(autoincrement())[m
+[31m-  vendorId     Int     @map("vendor_id")[m
+[32m+[m[32m  id        Int    @id @default(autoincrement())[m
+[32m+[m[32m  vendorId  Int    @map("vendor_id")[m
+   serviceTitle String  @map("service_title")[m
+   description  String[m
+   price        Decimal @db.Decimal(10, 2)[m
+[36m@@ -58,6 +62,8 @@[m [mmodel Service {[m
+   categoryId   Int     @map("category_id")[m
+   image        String?[m
+   avgRating    Decimal @default(0) @db.Decimal(3, 2) @map("avg_rating")[m
+[32m+[m[32m  createdAt DateTime @default(now()) @map("created_at")[m
+[32m+[m[32m  updatedAt DateTime @updatedAt @map("updated_at")[m
+ [m
+   vendor   User     @relation("VendorServices", fields: [vendorId], references: [id], onDelete: Cascade)[m
+   category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)[m
+[36m@@ -77,6 +83,8 @@[m [mmodel Negotiation {[m
+   customerId Int               @map("customer_id")[m
+   offerPrice Decimal           @db.Decimal(10, 2) @map("offer_price")[m
+   status     NegotiationStatus @default(PENDING)[m
+[32m+[m[32m  createdAt DateTime @default(now()) @map("created_at")[m
+[32m+[m[32m  updatedAt DateTime @updatedAt @map("updated_at")[m
+ [m
+   service  Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)[m
+   customer User    @relation("CustomerNegotiations", fields: [customerId], references: [id], onDelete: Cascade)[m
+[36m@@ -92,6 +100,8 @@[m [mmodel Review {[m
+   customerId Int    @map("customer_id")[m
+   rating     Int[m
+   comment    String?[m
+[32m+[m[32m  createdAt DateTime @default(now()) @map("created_at")[m
+[32m+[m[32m  updatedAt DateTime @updatedAt @map("updated_at")[m
+ [m
+   service  Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)[m
+   customer User    @relation("CustomerReviews", fields: [customerId], references: [id], onDelete: Cascade)[m
