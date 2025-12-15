@@ -301,7 +301,7 @@ export const updateService = async (req: Request, res: Response) => {
         details: error.errors 
       });
     }
-    if (error.code === 'P2025') {
+    if ((error as any).code === 'P2025') {
       return res.status(404).json({ error: 'Service not found' });
     }
     res.status(500).json({ error: 'Internal server error' });
@@ -344,7 +344,7 @@ export const deleteService = async (req: Request, res: Response) => {
     res.json({ message: 'Service deleted successfully' });
   } catch (error) {
     console.error('Delete service error:', error);
-    if (error.code === 'P2025') {
+    if ((error as any).code === 'P2025') {
       return res.status(404).json({ error: 'Service not found' });
     }
     res.status(500).json({ error: 'Internal server error' });

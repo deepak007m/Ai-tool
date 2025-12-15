@@ -1,8 +1,6 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../config/database';
 import bcrypt from 'bcrypt';
-
-const prisma = new PrismaClient();
 
 // Get current user profile
 export const getProfile = async (req: Request, res: Response) => {
@@ -71,7 +69,7 @@ export const updateProfile = async (req: Request, res: Response) => {
     res.json(updatedUser);
   } catch (error) {
     console.error('Update profile error:', error);
-    if (error.code === 'P2002') {
+    if ((error as any).code === 'P2002') {
       return res.status(400).json({ error: 'Email already exists' });
     }
     res.status(500).json({ error: 'Internal server error' });
@@ -167,7 +165,7 @@ export const updateUserRole = async (req: Request, res: Response) => {
     res.json(updatedUser);
   } catch (error) {
     console.error('Update user role error:', error);
-    if (error.code === 'P2025') {
+    if ((error as any).code === 'P2025') {
       return res.status(404).json({ error: 'User not found' });
     }
     res.status(500).json({ error: 'Internal server error' });
